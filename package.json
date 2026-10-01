@@ -1,0 +1,37 @@
+{
+  "name": "rent-a-drive",
+  "version": "1.0.0",
+  "description": "",
+  "main": "server.js",
+  "type": "module",
+  "scripts": {
+    "dev": "nodemon backend/server.js",
+    "start": "node backend/server.js ",
+    "test": "node --test backend/database.test.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "body-parser": "^1.20.2",
+    "cloudinary": "^2.0.3",
+    "clsx": "^2.1.1",
+    "cookie-parser": "^1.4.6",
+    "cors": "^2.8.5",
+    "datauri": "^4.1.0",
+    "dotenv": "^16.4.5",
+    "express": "^4.22.3",
+    "framer-motion": "^11.1.7",
+    "jsonwebtoken": "^9.0.2",
+    "multer": "^1.4.5-lts.1",
+    "nodemailer": "^6.9.13",
+    "nodemon": "^3.1.0",
+    "pg": "^8.23.1",
+    "pg-hstore": "^2.3.4",
+    "razorpay": "^2.9.3",
+    "sequelize": "^6.37.8",
+    "tailwind-merge": "^2.3.0",
+    "uuid": "^9.0.1"
+  }
+}
