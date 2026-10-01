@@ -3,105 +3,107 @@ import { v4 as uuidv4 } from "uuid";
 import { errorHandler } from "../../utils/error.js";
 
 const dummyData = [
-  //kochi
+  // Ethiopia pickup and drop-off locations
   {
     id: uuidv4(),
-    district: "Kochi",
-    location: "kalamassery : skoda service",
+    district: "Addis Ababa",
+    location: "Bole International Airport (ADD)",
     type: "location",
   },
   {
     id: uuidv4(),
-    district: "Kochi",
-    location: "kalamassery : volkswagen",
+    district: "Addis Ababa",
+    location: "Meskel Square",
     type: "location",
   },
   {
     id: uuidv4(),
-    district: "Kochi",
-    location: "cheranallur : volkswagen",
-    type: "location",
-  },
-
-  //kottayam
-
-  {
-    id: uuidv4(),
-    district: "Kottayam",
-    location: "ettumanoor : skoda service",
+    district: "Addis Ababa",
+    location: "Bole Medhanialem",
     type: "location",
   },
   {
     id: uuidv4(),
-    district: "Kottayam",
-    location: "kottayam : railway station",
+    district: "Addis Ababa",
+    location: "Megenagna",
     type: "location",
   },
   {
     id: uuidv4(),
-    district: "Kottayam",
-    location: "thellakom : volkswagen",
-    type: "location",
-  },
-
-  //trivandrum
-
-  {
-    id: uuidv4(),
-    district: "Trivandrum",
-    location: "Nh 66 bybass : kochuveli railway station",
+    district: "Addis Ababa",
+    location: "Kazanchis",
     type: "location",
   },
   {
     id: uuidv4(),
-    district: "Trivandrum",
-    location: "tampanur : central railway station",
+    district: "Adama",
+    location: "Adama City Center",
     type: "location",
   },
   {
     id: uuidv4(),
-    district: "Trivandrum",
-    location: "kazhakootam : railway station",
-    type: "location",
-  },
-
-  //thrissur
-  {
-    id: uuidv4(),
-    district: "Thrissur",
-    location: "thrissur : railway station",
+    district: "Adama",
+    location: "Adama Bus Terminal",
     type: "location",
   },
   {
     id: uuidv4(),
-    district: "Thrissur",
-    location: "valarkavu : near ganam theater",
+    district: "Bishoftu",
+    location: "Bishoftu City Center",
     type: "location",
   },
   {
     id: uuidv4(),
-    district: "Thrissur",
-    location: "paliyekara : evm mg",
-    type: "location",
-  },
-
-  //calicut
-  {
-    id: uuidv4(),
-    district: "Calicut",
-    location: "calicut : railway",
+    district: "Bishoftu",
+    location: "Kuriftu Resort",
     type: "location",
   },
   {
     id: uuidv4(),
-    district: "Calicut",
-    location: "calicut : airport",
+    district: "Hawassa",
+    location: "Hawassa City Center",
     type: "location",
   },
   {
     id: uuidv4(),
-    district: "Calicut",
-    location: "pavangad : evm nissan",
+    district: "Hawassa",
+    location: "Hawassa Bus Terminal",
+    type: "location",
+  },
+  {
+    id: uuidv4(),
+    district: "Bahir Dar",
+    location: "Bahir Dar Airport",
+    type: "location",
+  },
+  {
+    id: uuidv4(),
+    district: "Bahir Dar",
+    location: "Bahir Dar Bus Terminal",
+    type: "location",
+  },
+  {
+    id: uuidv4(),
+    district: "Gondar",
+    location: "Gondar Airport",
+    type: "location",
+  },
+  {
+    id: uuidv4(),
+    district: "Dire Dawa",
+    location: "Dire Dawa City Center",
+    type: "location",
+  },
+  {
+    id: uuidv4(),
+    district: "Jimma",
+    location: "Jimma City Center",
+    type: "location",
+  },
+  {
+    id: uuidv4(),
+    district: "Mekelle",
+    location: "Mekelle City Center",
     type: "location",
   },
 
@@ -343,13 +345,34 @@ const dummyData = [
 ];
 
 // Function to insert dummy data into the database
-export async function insertDummyData() {
+export async function insertDummyData(req, res, next) {
   try {
-    // Insert the dummy data into the collection
-    await MasterData.insertMany(dummyData);
-    console.log("Dummy data inserted successfully.");
+    const locations = dummyData.filter((item) => item.type === "location");
+    const carModels = dummyData.filter((item) => item.type === "car");
+
+    await MasterData.sequelize.transaction(async (transaction) => {
+      await MasterData.destroy({
+        where: { type: "location" },
+        transaction,
+      });
+      await MasterData.bulkCreate(locations, { transaction });
+
+      const existingCarCount = await MasterData.count({
+        where: { type: "car" },
+        transaction,
+      });
+      if (existingCarCount === 0) {
+        await MasterData.bulkCreate(carModels, { transaction });
+      }
+    });
+
+    res.status(200).json({
+      message: "Ethiopian pickup and drop-off locations are ready.",
+      locationCount: locations.length,
+    });
   } catch (error) {
     console.error("Error inserting dummy data:", error);
+    next(errorHandler(500, "Could not update location data."));
   }
 }
 

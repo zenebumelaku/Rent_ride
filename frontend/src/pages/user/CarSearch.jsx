@@ -1,4 +1,8 @@
-import { IconCalendarEvent, IconMapPinFilled, IconX } from "@tabler/icons-react";
+import {
+  IconCalendarEvent,
+  IconMapPinFilled,
+  IconX,
+} from "@tabler/icons-react";
 import { DemoContainer } from "@mui/x-date-pickers/internals/demo";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
@@ -10,7 +14,11 @@ import TextField from "@mui/material/TextField";
 import { MenuItem } from "@mui/material";
 
 //reducers
-import { setAvailableCars, setLocationsOfDistrict, setSelectedDistrict } from "../../redux/user/selectRideSlice";
+import {
+  setAvailableCars,
+  setLocationsOfDistrict,
+  setSelectedDistrict,
+} from "../../redux/user/selectRideSlice";
 
 import * as z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -21,13 +29,15 @@ import useFetchLocationsLov from "../../hooks/useFetchLocationsLov";
 
 const schema = z.object({
   dropoff_location: z.string().min(1, { message: "Dropoff location needed" }),
-  pickup_district: z.string().min(1, { message: "Pickup District needed" }),
+  pickup_district: z.string().min(1, { message: "Pickup city needed" }),
   pickup_location: z.string().min(1, { message: "Pickup Location needed" }),
 
   pickuptime: z.object({
-    $d: z.instanceof(Date).refine((date) => date !== null && date !== undefined, {
-      message: "Date is not selected",
-    }),
+    $d: z
+      .instanceof(Date)
+      .refine((date) => date !== null && date !== undefined, {
+        message: "Date is not selected",
+      }),
   }),
 
   dropofftime: z.object(
@@ -44,7 +54,7 @@ const schema = z.object({
       $ms: z.number(), // Millisecond
       $isDayjsObject: z.boolean(), // Indicator for Day.js object
     },
-    { message: "drop-off time is required" }
+    { message: "drop-off time is required" },
   ),
 });
 
@@ -71,7 +81,9 @@ const CarSearch = () => {
   const uniqueDistrict = districtData?.filter((cur, idx) => {
     return cur !== districtData[idx + 1];
   });
-  const { selectedDistrict, wholeData, locationsOfDistrict } = useSelector((state) => state.selectRideSlice);
+  const { selectedDistrict, wholeData, locationsOfDistrict } = useSelector(
+    (state) => state.selectRideSlice,
+  );
 
   const [pickup, setPickup] = useState(null);
   const [error, setError] = useState(null);
@@ -138,9 +150,12 @@ const CarSearch = () => {
             dropofftime: null, // Reset dropofftime to null
           });
 
-          const pickupDistrictElement = document.getElementById("pickup_district");
-          const pickupLocationElement = document.getElementById("pickup_location");
-          const dropoffLocationElement = document.getElementById("dropoff_location");
+          const pickupDistrictElement =
+            document.getElementById("pickup_district");
+          const pickupLocationElement =
+            document.getElementById("pickup_location");
+          const dropoffLocationElement =
+            document.getElementById("dropoff_location");
 
           if (pickupDistrictElement) {
             pickupDistrictElement.innerHTML = "";
@@ -164,7 +179,10 @@ const CarSearch = () => {
 
   return (
     <>
-      <section id="booking-section" className="book-section relative z-10 mt-[50px]  mx-auto max-w-[1500px] bg-white">
+      <section
+        id="booking-section"
+        className="book-section relative z-10 mt-[50px]  mx-auto max-w-[1500px] bg-white"
+      >
         {/* overlay */}
 
         <div className="container bg-white">
@@ -177,14 +195,16 @@ const CarSearch = () => {
               </p>
 
               <p className="booking-done">
-                Check your email to confirm an order. <IconX width={20} height={20} />
+                Check your email to confirm an order.{" "}
+                <IconX width={20} height={20} />
               </p>
 
               <form onSubmit={handleSubmit(hanldeData)}>
                 <div className="box-form">
                   <div className="box-form__car-type">
                     <label htmlFor="pickup_district">
-                      <IconMapPinFilled className="input-icon" /> &nbsp; Pick-up District <p className="text-red-500">*</p>
+                      <IconMapPinFilled className="input-icon" /> &nbsp; Pick-up
+                      City <p className="text-red-500">*</p>
                     </label>
                     <Controller
                       name="pickup_district"
@@ -204,10 +224,13 @@ const CarSearch = () => {
                         >
                           {isLoading == true && (
                             <MenuItem value="">
-                              <span className="animate-pulse">Loading</span> <span className="animate-pulse">...</span>
+                              <span className="animate-pulse">Loading</span>{" "}
+                              <span className="animate-pulse">...</span>
                             </MenuItem>
                           )}
-                          {!isLoading && <MenuItem value="">Select a Place</MenuItem>}
+                          {!isLoading && (
+                            <MenuItem value="">Select a Place</MenuItem>
+                          )}
                           {uniqueDistrict?.map((cur, idx) => (
                             <MenuItem value={cur} key={idx}>
                               {cur}
@@ -216,12 +239,17 @@ const CarSearch = () => {
                         </TextField>
                       )}
                     />
-                    {errors.pickup_district && <p className="text-red-500">{errors.pickup_district.message}</p>}
+                    {errors.pickup_district && (
+                      <p className="text-red-500">
+                        {errors.pickup_district.message}
+                      </p>
+                    )}
                   </div>
 
                   <div className="box-form__car-type ">
                     <label htmlFor="pickup_location">
-                      <IconMapPinFilled className="input-icon" /> &nbsp; Pick-up Location <p className="text-red-500">*</p>
+                      <IconMapPinFilled className="input-icon" /> &nbsp; Pick-up
+                      Location <p className="text-red-500">*</p>
                     </label>
                     <Controller
                       name="pickup_location"
@@ -239,26 +267,38 @@ const CarSearch = () => {
                         >
                           {isLoading && (
                             <MenuItem value="">
-                              <span className="animate-pulse">Loading</span> <span className="animate-pulse">...</span>
+                              <span className="animate-pulse">Loading</span>{" "}
+                              <span className="animate-pulse">...</span>
                             </MenuItem>
                           )}
-                          {!isLoading && <MenuItem value="">Select a specific location</MenuItem>}
+                          {!isLoading && (
+                            <MenuItem value="">
+                              Select a specific location
+                            </MenuItem>
+                          )}
                           {/* conditionaly rendering options based on district selected or not */}
                           {locationsOfDistrict &&
-                            locationsOfDistrict.map((availableLocations, idx) => (
-                              <MenuItem value={availableLocations} key={idx}>
-                                {availableLocations}
-                              </MenuItem>
-                            ))}
+                            locationsOfDistrict.map(
+                              (availableLocations, idx) => (
+                                <MenuItem value={availableLocations} key={idx}>
+                                  {availableLocations}
+                                </MenuItem>
+                              ),
+                            )}
                         </TextField>
                       )}
                     />
-                    {errors.pickup_location && <p className="text-red-500">{errors.pickup_location.message}</p>}
+                    {errors.pickup_location && (
+                      <p className="text-red-500">
+                        {errors.pickup_location.message}
+                      </p>
+                    )}
                   </div>
 
                   <div className="box-form__car-type">
                     <label>
-                      <IconMapPinFilled className="input-icon" /> &nbsp; Drop-of Location <p className="text-red-500">*</p>
+                      <IconMapPinFilled className="input-icon" /> &nbsp; Drop-of
+                      Location <p className="text-red-500">*</p>
                     </label>
 
                     <Controller
@@ -277,26 +317,38 @@ const CarSearch = () => {
                         >
                           {isLoading && (
                             <MenuItem value="">
-                              <span className="animate-pulse">Loading</span> <span className="animate-pulse">...</span>
+                              <span className="animate-pulse">Loading</span>{" "}
+                              <span className="animate-pulse">...</span>
                             </MenuItem>
                           )}
-                          {isLoading && <MenuItem value="">Select a specific location</MenuItem>}
+                          {isLoading && (
+                            <MenuItem value="">
+                              Select a specific location
+                            </MenuItem>
+                          )}
                           {/* conditionaly rendering options based on district selected or not */}
                           {locationsOfDistrict &&
-                            locationsOfDistrict.map((availableLocations, idx) => (
-                              <MenuItem value={availableLocations} key={idx}>
-                                {availableLocations}
-                              </MenuItem>
-                            ))}
+                            locationsOfDistrict.map(
+                              (availableLocations, idx) => (
+                                <MenuItem value={availableLocations} key={idx}>
+                                  {availableLocations}
+                                </MenuItem>
+                              ),
+                            )}
                         </TextField>
                       )}
                     />
-                    {errors.dropoff_location && <p className="text-red-500">{errors.dropoff_location.message}</p>}
+                    {errors.dropoff_location && (
+                      <p className="text-red-500">
+                        {errors.dropoff_location.message}
+                      </p>
+                    )}
                   </div>
 
                   <div className="box-form__car-time">
                     <label htmlFor="picktime" className="flex items-center">
-                      <IconCalendarEvent className="input-icon" /> &nbsp; Pick-up Date <p className="text-red-500">*</p>
+                      <IconCalendarEvent className="input-icon" /> &nbsp;
+                      Pick-up Date <p className="text-red-500">*</p>
                     </label>
                     <Controller
                       name={"pickuptime"}
@@ -318,12 +370,17 @@ const CarSearch = () => {
                         </LocalizationProvider>
                       )}
                     />
-                    {errors.pickuptime && <p className="text-red-500">{errors.pickuptime.message}</p>}
+                    {errors.pickuptime && (
+                      <p className="text-red-500">
+                        {errors.pickuptime.message}
+                      </p>
+                    )}
                   </div>
 
                   <div className="box-form__car-time">
                     <label htmlFor="droptime" className="flex items-center">
-                      <IconCalendarEvent className="input-icon" /> &nbsp; Drop-of Date <p className="text-red-500">*</p>
+                      <IconCalendarEvent className="input-icon" /> &nbsp;
+                      Drop-of Date <p className="text-red-500">*</p>
                     </label>
                     <Controller
                       name={"dropofftime"}
@@ -331,13 +388,24 @@ const CarSearch = () => {
                       render={({ field }) => (
                         <LocalizationProvider dateAdapter={AdapterDayjs}>
                           <DemoContainer components={["DateTimePicker"]}>
-                            <DateTimePicker label="Dropoff time" {...field} value={field.value} minDate={pickup ? oneDayGap : dayjs()} />
+                            <DateTimePicker
+                              label="Dropoff time"
+                              {...field}
+                              value={field.value}
+                              minDate={pickup ? oneDayGap : dayjs()}
+                            />
                           </DemoContainer>
                         </LocalizationProvider>
                       )}
                     />
-                    {errors.dropofftime && <p className="text-red-500">{errors.dropofftime.message}</p>}
-                    {error && <p className="text-[8px] text-red-500">{error}</p>}
+                    {errors.dropofftime && (
+                      <p className="text-red-500">
+                        {errors.dropofftime.message}
+                      </p>
+                    )}
+                    {error && (
+                      <p className="text-[8px] text-red-500">{error}</p>
+                    )}
                   </div>
 
                   <button type="submit" className="book-content__box_button">

@@ -1,35 +1,60 @@
-import express from "express"
-import { adminAuth ,adminProfiile } from "../controllers/adminControllers/adminController.js"
-import { signIn } from "../controllers/authController.js"
-import { signOut  } from "../controllers/userControllers/userController.js"
-import { addProduct, deleteVehicle, editVehicle,  } from "../controllers/adminControllers/dashboardController.js"
-import { showVehicles } from "../controllers/adminControllers/dashboardController.js"
-import { multerUploads } from "../utils/multer.js"
-import { insertDummyData } from "../controllers/adminControllers/masterCollectionController.js"
-import { getCarModelData } from "../controllers/adminControllers/masterCollectionController.js"
-import { approveVendorVehicleRequest, fetchVendorVehilceRequests, rejectVendorVehicleRequest } from "../controllers/adminControllers/vendorVehilceRequests.js"
-import { allBookings, changeStatus } from "../controllers/adminControllers/bookingsController.js"
-import { verifyToken } from "../utils/verifyUser.js"
+import express from "express";
+import {
+  adminAuth,
+  adminProfiile,
+} from "../controllers/adminControllers/adminController.js";
+import { signIn } from "../controllers/authController.js";
+import { signOut } from "../controllers/userControllers/userController.js";
+import {
+  addProduct,
+  deleteVehicle,
+  editVehicle,
+} from "../controllers/adminControllers/dashboardController.js";
+import { showVehicles } from "../controllers/adminControllers/dashboardController.js";
+import { multerUploads } from "../utils/multer.js";
+import { insertDummyData } from "../controllers/adminControllers/masterCollectionController.js";
+import { getCarModelData } from "../controllers/adminControllers/masterCollectionController.js";
+import {
+  approveVendorVehicleRequest,
+  fetchVendorVehilceRequests,
+  rejectVendorVehicleRequest,
+} from "../controllers/adminControllers/vendorVehilceRequests.js";
+import {
+  allBookings,
+  changeStatus,
+} from "../controllers/adminControllers/bookingsController.js";
+import { verifyToken } from "../utils/verifyUser.js";
+import User from "../models/userModel.js";
 
+const router = express.Router();
 
+const requireAdmin = async (req, res, next) => {
+  try {
+    const user = await User.findByPk(req.user);
+    if (!user?.isAdmin) {
+      return res
+        .status(403)
+        .json({ message: "Only admins can update location data." });
+    }
+    next();
+  } catch (error) {
+    next(error);
+  }
+};
 
+router.post("/dashboard", signIn, adminAuth);
+router.post("/profile", adminProfiile);
+router.get("/signout", signOut);
+router.post("/addProduct", multerUploads, addProduct);
+router.get("/showVehicles", showVehicles);
+router.delete("/deleteVehicle/:id", deleteVehicle);
+router.put("/editVehicle/:id", editVehicle);
+router.post("/dummyData", verifyToken, requireAdmin, insertDummyData);
+router.get("/getVehicleModels", getCarModelData);
+router.get("/fetchVendorVehilceRequests", fetchVendorVehilceRequests);
+router.post("/approveVendorVehicleRequest", approveVendorVehicleRequest);
+router.post("/rejectVendorVehicleRequest", rejectVendorVehicleRequest);
+router.get("/allBookings", allBookings);
+router.post("/changeStatus", changeStatus);
 
-
-const router = express.Router()
-
-router.post('/dashboard',signIn,adminAuth)
-router.post('/profile',adminProfiile)
-router.get('/signout',signOut)
-router.post('/addProduct',multerUploads,addProduct)
-router.get('/showVehicles',showVehicles)
-router.delete('/deleteVehicle/:id',deleteVehicle)
-router.put('/editVehicle/:id',editVehicle)
-router.get('/dummyData',insertDummyData)
-router.get('/getVehicleModels',getCarModelData)
-router.get('/fetchVendorVehilceRequests',fetchVendorVehilceRequests)
-router.post('/approveVendorVehicleRequest',approveVendorVehicleRequest)
-router.post('/rejectVendorVehicleRequest',rejectVendorVehicleRequest)
-router.get('/allBookings',allBookings)
-router.post('/changeStatus',changeStatus)
-
-export default router
+export default router;
